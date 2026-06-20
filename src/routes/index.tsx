@@ -340,7 +340,7 @@ function Projects() {
           <div className="flex flex-wrap gap-3 mt-8">
             {/* Live Demo Redirect */}
             <a
-              href="https://nura-app-final.vercel.app" // Swap with your live project URL
+              href="https://nura-app-final.vercel.app" 
               target="_blank"
               rel="noopener noreferrer"
               className="px-5 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:scale-[1.02] transition shadow-glow"
@@ -349,7 +349,7 @@ function Projects() {
             </a>
             {/* GitHub Repository Redirect */}
             <a
-              href="https://github.com/ArushKshatriya/nura-app-final.git" // Swap with your GitHub repo URL
+              href="https://github.com/ArushKshatriya/nura-app_final.git" 
               target="_blank"
               rel="noopener noreferrer"
               className="px-5 py-2.5 rounded-full border border-border text-sm hover:border-primary hover:text-primary transition"
