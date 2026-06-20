@@ -349,7 +349,7 @@ function Projects() {
             </a>
             {/* GitHub Repository Redirect */}
             <a
-              href="https://github.com/ArushKshatriya/nura-app.git" // Swap with your GitHub repo URL
+              href="https://github.com/ArushKshatriya/nura-app-final.git" // Swap with your GitHub repo URL
               target="_blank"
               rel="noopener noreferrer"
               className="px-5 py-2.5 rounded-full border border-border text-sm hover:border-primary hover:text-primary transition"
