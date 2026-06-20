@@ -28,7 +28,6 @@ function buildCarPositions(): Float32Array {
   geos.push(new THREE.EdgesGeometry(trunk));
 
   // 4 wheels
-
   const wheelPositions: [number, number, number][] = [
     [-1.1, -0.45, 0.72],
     [1.1, -0.45, 0.72],
@@ -37,12 +36,10 @@ function buildCarPositions(): Float32Array {
   ];
   for (const [x, y, z] of wheelPositions) {
     const w = new THREE.TorusGeometry(0.42, 0.05, 6, 24);
-    // REMOVED rotateY here so it faces the correct Z-axis naturally
     w.translate(x, y, z);
     geos.push(new THREE.EdgesGeometry(w));
 
     const rim = new THREE.CircleGeometry(0.35, 10);
-    // REMOVED rotateY here to match the outer tire alignment
     rim.translate(x, y, z);
     geos.push(new THREE.EdgesGeometry(rim));
   }
@@ -68,11 +65,8 @@ function buildCarPositions(): Float32Array {
 
 function buildWirePositions(length: number): Float32Array {
   const arr = new Float32Array(length);
-  // build as several wandering "cables" of paired segments
   const segCount = length / 6;
-  let x = 0,
-    y = 0,
-    z = 0;
+  let x = 0, y = 0, z = 0;
   let cableLen = 0;
   for (let s = 0; s < segCount; s++) {
     if (cableLen <= 0) {
@@ -108,7 +102,8 @@ function Morph({ progressRef }: { progressRef: React.MutableRefObject<number> })
   const { car, wires, current } = useMemo(() => {
     const car = buildCarPositions();
     const wires = buildWirePositions(car.length);
-    const current = new Float32Array(car); // start as car
+    // CHANGED: Initialized with 'wires' positions instead of 'car' positions
+    const current = new Float32Array(wires); 
     return { car, wires, current };
   }, []);
 
@@ -118,7 +113,6 @@ function Morph({ progressRef }: { progressRef: React.MutableRefObject<number> })
     return g;
   }, [current]);
 
-  // smoothed progress
   const smoothP = useRef(0);
 
   useFrame(({ clock, pointer }, delta) => {
@@ -128,23 +122,23 @@ function Morph({ progressRef }: { progressRef: React.MutableRefObject<number> })
 
     const pos = geo.attributes.position.array as Float32Array;
     for (let i = 0; i < pos.length; i++) {
-      pos[i] = car[i] * (1 - ease) + wires[i] * ease;
+      // CHANGED: Inverted the math flow. Now starts at wires (1 - ease) and moves to car (ease)
+      pos[i] = wires[i] * (1 - ease) + car[i] * ease;
     }
     geo.attributes.position.needsUpdate = true;
     geo.computeBoundingSphere();
 
-    // rotate & react to cursor
     const t = clock.getElapsedTime();
     if (lineRef.current) {
       lineRef.current.rotation.y = t * 0.15 + pointer.x * 0.6;
       lineRef.current.rotation.x = pointer.y * 0.3 + Math.sin(t * 0.4) * 0.05;
     }
 
-    // color shift lime -> magenta as it morphs
     if (matRef.current) {
+      // CHANGED: Swapped color interpolation values so it starts magenta (#c084fc) and becomes lime (#d4ff3a)
       const c = new THREE.Color().lerpColors(
-        new THREE.Color("#d4ff3a"),
         new THREE.Color("#c084fc"),
+        new THREE.Color("#d4ff3a"),
         ease,
       );
       matRef.current.color.copy(c);
@@ -153,7 +147,7 @@ function Morph({ progressRef }: { progressRef: React.MutableRefObject<number> })
 
   return (
     <lineSegments ref={lineRef} geometry={geo}>
-      <lineBasicMaterial ref={matRef} color="#d4ff3a" transparent opacity={0.95} linewidth={1} />
+      <lineBasicMaterial ref={matRef} color="#c084fc" transparent opacity={0.95} linewidth={1} />
     </lineSegments>
   );
 }
@@ -190,21 +184,22 @@ export function CarMorphSection() {
     };
   }, []);
 
+  // CHANGED: Swapped HUD step text definitions to logically read from Raw Wires -> Compiled Blueprint
   const labels = [
     {
       tag: "Phase 01",
-      title: "Blueprint",
-      body: "A clean wireframe. Structured, intentional, every edge accounted for.",
+      title: "Pure Wires",
+      body: "Underneath every product is a tangle of state, data, and intent.",
     },
     {
       tag: "Phase 02",
-      title: "Disassembly",
-      body: "Edges unravel. What looked solid becomes a network of signals.",
+      title: "Assembly",
+      body: "Signals begin to align. Scattered nodes find their architecture and map to physical boundaries.",
     },
     {
       tag: "Phase 03",
-      title: "Pure Wires",
-      body: "Underneath every product is a tangle of state, data, and intent.",
+      title: "Blueprint",
+      body: "A clean wireframe forms. Structured, intentional, every edge seamlessly accounted for.",
     },
   ];
 
