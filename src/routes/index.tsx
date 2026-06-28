@@ -340,7 +340,7 @@ function Projects() {
           <div className="flex flex-wrap gap-3 mt-8">
             {/* Live Demo Redirect */}
             <a
-              href="https://nura-app-final.vercel.app" 
+              href="https://nuralife.vercel.app" 
               target="_blank"
               rel="noopener noreferrer"
               className="px-5 py-2.5 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:scale-[1.02] transition shadow-glow"
